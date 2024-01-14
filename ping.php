@@ -46,8 +46,31 @@ class PingApp {
             die("Connection failed: " . $conn->connect_error);
         }
 
-        // Tambahkan IP dan port ke database
-        $sql = "INSERT INTO `ip_addresses` (`ip`, `port`) VALUES ('$ip', '$port')";
+        // Periksa apakah IP dan port sudah ada sebelumnya
+        $existingIPs = array_column($this->pingIPAddresses(), 'ip');
+        $existingPorts = array_column($this->pingIPAddresses(), 'port');
+
+        if (!in_array($ip, $existingIPs) || !in_array($port, $existingPorts)) {
+            // Tambahkan IP dan port ke database
+            $sql = "INSERT INTO `ip_addresses` (`ip`, `port`) VALUES ('$ip', '$port')";
+            $conn->query($sql);
+        }
+
+        // Tutup koneksi
+        $conn->close();
+    }
+
+    public function deleteIPAddress($ip) {
+        // Koneksi ke database
+        $conn = new mysqli($this->host, $this->username, $this->password, $this->database);
+
+        // Periksa koneksi
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Hapus data IP dari database
+        $sql = "DELETE FROM `ip_addresses` WHERE `ip` = '$ip'";
         $conn->query($sql);
 
         // Tutup koneksi
@@ -67,32 +90,4 @@ class PingApp {
         }
     }
 }
-
-// Contoh penggunaan
-$pingApp = new PingApp();
-
-// Tambahkan IP dan port baru
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $ip = $_POST["ip"];
-    $port = $_POST["port"];
-    $pingApp->addIPAddress($ip, $port);
-}
-
-// Ambil dan tampilkan hasil
-$results = $pingApp->pingIPAddresses();
-
-echo "<pre>";
-print_r($results);
-echo "</pre>";
 ?>
-
-<!-- Formulir untuk menambahkan IP dan port -->
-<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-    <label for="ip">IP Address:</label>
-    <input type="text" name="ip" required>
-
-    <label for="port">Port:</label>
-    <input type="number" name="port" required>
-
-    <input type="submit" value="Add IP">
-</form>
