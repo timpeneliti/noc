@@ -23,11 +23,12 @@ class PingApp {
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
+                $id = $row['id'];
                 $ip = $row['ip'];
                 $port = $row['port'];
                 $status = $this->pingIPAddress($ip, $port);
 
-                $results[] = array('ip' => $ip, 'port' => $port, 'status' => $status);
+                $results[] = array('id' => $id, 'ip' => $ip, 'port' => $port, 'status' => $status);
             }
         }
 
@@ -60,7 +61,7 @@ class PingApp {
         $conn->close();
     }
 
-    public function deleteIPAddress($ip) {
+    public function deleteIPAddressById($id) {
         // Koneksi ke database
         $conn = new mysqli($this->host, $this->username, $this->password, $this->database);
 
@@ -69,8 +70,8 @@ class PingApp {
             die("Connection failed: " . $conn->connect_error);
         }
 
-        // Hapus data IP dari database
-        $sql = "DELETE FROM `ip_addresses` WHERE `ip` = '$ip'";
+        // Hapus data IP berdasarkan id dari database
+        $sql = "DELETE FROM `ip_addresses` WHERE `id` = $id";
         $conn->query($sql);
 
         // Tutup koneksi

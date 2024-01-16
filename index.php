@@ -10,8 +10,14 @@
     
     <?php
     include 'ping.php';
-    
+
     $pingApp = new PingApp();
+
+    // Hapus IP berdasarkan id
+    if (isset($_GET["deleteId"])) {
+        $deleteId = $_GET["deleteId"];
+        $pingApp->deleteIPAddressById($deleteId);
+    }
 
     // Tambahkan IP dan port baru
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -27,21 +33,29 @@
                 $pingApp->addIPAddress($ip, $port);
             }
         }
-
-        // Hapus IP berdasarkan formulir
-        if (isset($_POST["deleteIp"])) {
-            $deleteIp = $_POST["deleteIp"];
-            $pingApp->deleteIPAddress($deleteIp);
-        }
     }
 
     // Ambil dan tampilkan hasil
     $results = $pingApp->pingIPAddresses();
 
     foreach ($results as $result) {
-        echo "<p>IP: {$result['ip']}, Port: {$result['port']}, Status: {$result['status']}</p>";
+        // Periksa apakah kunci 'id' tersedia sebelum mengaksesnya
+        $id = isset($result['id']) ? $result['id'] : null;
+
+        echo "<p>IP: {$result['ip']}, Port: {$result['port']}, Status: {$result['status']} ";
+        echo "<a href=\"javascript:void(0);\" onclick=\"deleteIPAddress($id)\">Delete</a></p>";
     }
     ?>
+    
+    <script>
+        function deleteIPAddress(id) {
+            var confirmation = confirm("Are you sure you want to delete this IP address?");
+            if (confirmation) {
+                // Redirect to the same page with the id parameter for deletion
+                window.location.href = "<?php echo $_SERVER['PHP_SELF']; ?>?deleteId=" + id;
+            }
+        }
+    </script>
 
     <!-- Formulir untuk menambahkan IP dan port -->
     <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
