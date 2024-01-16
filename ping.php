@@ -48,10 +48,9 @@ class PingApp {
         }
 
         // Periksa apakah IP dan port sudah ada sebelumnya
-        $existingIPs = array_column($this->pingIPAddresses(), 'ip');
-        $existingPorts = array_column($this->pingIPAddresses(), 'port');
+        $existingIPsAndPorts = array_column($this->pingIPAddresses(), 'port', 'ip');
 
-        if (!in_array($ip, $existingIPs) || !in_array($port, $existingPorts)) {
+        if (!isset($existingIPsAndPorts[$ip]) || $existingIPsAndPorts[$ip] !== $port) {
             // Tambahkan IP dan port ke database
             $sql = "INSERT INTO `ip_addresses` (`ip`, `port`) VALUES ('$ip', '$port')";
             $conn->query($sql);

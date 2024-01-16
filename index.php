@@ -25,13 +25,8 @@
             $ip = $_POST["ip"];
             $port = $_POST["port"];
 
-            // Periksa apakah IP dan port sudah ada sebelumnya
-            $existingIPs = array_column($pingApp->pingIPAddresses(), 'ip');
-            $existingPorts = array_column($pingApp->pingIPAddresses(), 'port');
-
-            if (!in_array($ip, $existingIPs) || !in_array($port, $existingPorts)) {
-                $pingApp->addIPAddress($ip, $port);
-            }
+            // Tambahkan IP dan port ke database
+            $pingApp->addIPAddress($ip, $port);
         }
     }
 
