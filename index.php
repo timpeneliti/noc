@@ -28,6 +28,12 @@
             // Tambahkan IP dan port ke database
             $pingApp->addIPAddress($ip, $port);
         }
+
+        // Hapus IP berdasarkan formulir
+        if (isset($_POST["deleteIp"])) {
+            $deleteIp = $_POST["deleteIp"];
+            $pingApp->deleteIPAddress($deleteIp);
+        }
     }
 
     // Ambil dan tampilkan hasil

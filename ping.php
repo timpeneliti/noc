@@ -60,7 +60,7 @@ class PingApp {
         $conn->close();
     }
 
-    public function deleteIPAddressById($id) {
+    public function deleteIPAddress($ip) {
         // Koneksi ke database
         $conn = new mysqli($this->host, $this->username, $this->password, $this->database);
 
@@ -69,8 +69,8 @@ class PingApp {
             die("Connection failed: " . $conn->connect_error);
         }
 
-        // Hapus data IP berdasarkan id dari database
-        $sql = "DELETE FROM `ip_addresses` WHERE `id` = $id";
+        // Hapus data IP dari database
+        $sql = "DELETE FROM `ip_addresses` WHERE `ip` = '$ip'";
         $conn->query($sql);
 
         // Tutup koneksi
